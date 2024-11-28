@@ -1,7 +1,6 @@
 import connectDB from "./config";
 import dotenv from "dotenv"
 import express, { response } from "express"
-import cors from "cors"
 import { OAuth2Client } from "google-auth-library";
 import User from "./Models/User";
 import Content from "./Models/Content"
@@ -32,7 +31,7 @@ wss.on("connection", async (socket) => {
 
         if (message.type === "establish") {
             const { name } = message;
-            
+
             clients.set(name, socket);
         } else if (message.type === "message") {
             const { sender, recipient, content } = message;
@@ -68,7 +67,12 @@ dotenv.config()
 
 const app = express();
 app.use(express.json())
-app.use(cors({origin: "http://localhost:5173"}))
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    next();
+});
 
 const port = process.env.PORT || 5000
 
@@ -242,7 +246,7 @@ app.post("/messages", async (req, res) => {
         })
             .populate("sender", "name") // Populate sender's name
             .populate("receiver", "name"); // Populate receiver's name
-        
+
         res.status(200).json(messages);
     } catch (error) {
         console.error("Error fetching messages:", error);
