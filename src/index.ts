@@ -25,31 +25,29 @@ type Message = {
 
 wss.on("connection", async (socket) => {
     socket.on("message", async (data) => {
-        try {
-            // @ts-ignore
-            const message: Message = JSON.parse(data);
 
-            if (message.type === "establish") {
-                const { name } = message;
-                clients.set(name, socket);
-            } else if (message.type === "message") {
-                const { sender, recipient, content } = message;
-                const recipientSocket = clients.get(recipient);
-                let s = await User.findOne({ name: sender });
-                let r = await User.findOne({ name: recipient });
-                await Content.create({ sender: s?._id, receiver: r?._id, content });
-                if (recipientSocket && recipientSocket.readyState === WebSocket.OPEN) {
-                    recipientSocket.send(
-                        JSON.stringify({ sender, content })
-                    );
-                    socket.send(JSON.stringify({ sender, content }))
-                } else {
-                    socket.send(JSON.stringify({ sender, content }))
-                }
+        // @ts-ignore
+        const message: Message = JSON.parse(data);
+
+        if (message.type === "establish") {
+            const { name } = message;
+            clients.set(name, socket);
+        } else if (message.type === "message") {
+            const { sender, recipient, content } = message;
+            const recipientSocket = clients.get(recipient);
+            let s = await User.findOne({ name: sender });
+            let r = await User.findOne({ name: recipient });
+            await Content.create({ sender: s?._id, receiver: r?._id, content });
+            if (recipientSocket && recipientSocket.readyState === WebSocket.OPEN) {
+                recipientSocket.send(
+                    JSON.stringify({ sender, content })
+                );
+                socket.send(JSON.stringify({ sender, content }))
+            } else {
+                socket.send(JSON.stringify({ sender, content }))
             }
-        } catch (error) {
-            console.error("Error handling message:", error);
         }
+
     });
 
     socket.on("close", () => {
@@ -228,7 +226,7 @@ app.post("/messages", async (req, res) => {
         if (!s || !r) {
             res.status(404).json({ error: "Sender or receiver not found" });
             return;
-        }   
+        }
 
         // Use $or to handle bidirectional messages
         const messages = await Content.find({
