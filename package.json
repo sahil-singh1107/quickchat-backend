@@ -7,7 +7,6 @@
     "build": "tsc -b",
     "start": "nodemon dist/index.js",
     "dev": "npm run build && npm run start"
-    
   },
   "keywords": [],
   "author": "",
@@ -22,6 +21,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.11.0",
     "mongoose": "^8.8.3",
+    "typescript": "^5.7.2",
     "unique-names-generator": "^4.7.1",
     "unique-random": "^4.0.0",
     "ws": "^8.18.0"
