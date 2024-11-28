@@ -13,6 +13,7 @@
   "description": "",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "bunyan": "^1.8.15",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
@@ -21,6 +22,7 @@
     "mongodb": "^6.11.0",
     "mongoose": "^8.8.3",
     "nodemon": "^3.1.7",
+    "pino": "^9.5.0",
     "typescript": "^5.7.2",
     "unique-names-generator": "^4.7.1",
     "unique-random": "^4.0.0",

@@ -9,6 +9,7 @@ import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 const { uniqueNamesGenerator, colors, animals } = require('unique-names-generator');
 import { WebSocket, WebSocketServer } from "ws";
+const logger = require('pino')()
 
 let clients = new Map<string, WebSocket>()
 const wss = new WebSocketServer({ port: 8080 })
@@ -224,6 +225,9 @@ app.post("/messages", async (req, res) => {
 
         const s = await User.findOne({ name: sender });
         const r = await User.findOne({ name: receiver });
+
+        logger.info(s)
+        logger.info(r);
 
         if (!s || !r) {
             res.status(404).json({ error: "Sender or receiver not found" });
