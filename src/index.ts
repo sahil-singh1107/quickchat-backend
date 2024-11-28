@@ -32,9 +32,11 @@ wss.on("connection", async (socket) => {
 
         if (message.type === "establish") {
             const { name } = message;
+            logger.info(name);
             clients.set(name, socket);
         } else if (message.type === "message") {
             const { sender, recipient, content } = message;
+            logger.info(content);
             const recipientSocket = clients.get(recipient);
             let s = await User.findOne({ name: sender });
             let r = await User.findOne({ name: recipient });
@@ -226,9 +228,6 @@ app.post("/messages", async (req, res) => {
         const s = await User.findOne({ name: sender });
         const r = await User.findOne({ name: receiver });
 
-        logger.info(s)
-        logger.info(r);
-
         if (!s || !r) {
             res.status(404).json({ error: "Sender or receiver not found" });
             return;
@@ -243,7 +242,8 @@ app.post("/messages", async (req, res) => {
         })
             .populate("sender", "name") // Populate sender's name
             .populate("receiver", "name"); // Populate receiver's name
-
+        
+        logger.info(messages);
         res.status(200).json(messages);
     } catch (error) {
         console.error("Error fetching messages:", error);
