@@ -12,7 +12,7 @@ import { WebSocket, WebSocketServer } from "ws";
 const logger = require('pino')()
 
 let clients = new Map<string, WebSocket>()
-const wss = new WebSocketServer({ port: 8080 })
+const wss = new WebSocketServer({ port: 443 })
 
 type Message = {
     type: "establish";
@@ -32,7 +32,7 @@ wss.on("connection", async (socket) => {
 
         if (message.type === "establish") {
             const { name } = message;
-            logger.info(name);
+            
             clients.set(name, socket);
         } else if (message.type === "message") {
             const { sender, recipient, content } = message;
@@ -243,7 +243,6 @@ app.post("/messages", async (req, res) => {
             .populate("sender", "name") // Populate sender's name
             .populate("receiver", "name"); // Populate receiver's name
         
-        logger.info(messages);
         res.status(200).json(messages);
     } catch (error) {
         console.error("Error fetching messages:", error);
